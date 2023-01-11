@@ -3,7 +3,11 @@
 // PART 1: SHOW A FORTUNE
 
 function showFortune(evt) {
-  // TODO: get the fortune and show it in the #fortune-text div
+ fetch('/fortune')
+   .then((response) => response.json())
+   .then((responseData) => {
+      document.querySelector('#fortune-text').innerText = responseData;
+   });
 }
 
 document.querySelector('#get-fortune-button').addEventListener('click', showFortune);
@@ -16,7 +20,22 @@ function showWeather(evt) {
   const url = '/weather.json';
   const zipcode = document.querySelector('#zipcode-field').value;
 
-  // TODO: request weather with that URL and show the forecast in #weather-info
+  // const queryString = new URLSearchParams({zipcode}).toString();
+  // console.log(queryString);
+
+  // const url = `/weather.json?${queryString}`;
+  // console.log(url);
+  //url returns /weather.json?zipcode=94110
+
+  const forecast = `${url}?zipcode=${zipcode}`;
+  console.log(forecast);
+  //forecast returns /weather.json?zipcode=94110
+
+  fetch(url)
+    .then(response => response.text())
+    .then((status) => {
+      document.querySelector('#weather-info').innerHTML = status;
+    });
 }
 
 document.querySelector('#weather-form').addEventListener('submit', showWeather);
