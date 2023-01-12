@@ -62,6 +62,7 @@ def order_melons():
     elif qty > 0:
         result_code = 'OK'
         result_text = f"You have bought {qty} {melon} melons"
+    # could add an if statement to add error if form input is nothing/NoneType
     else:
         result_code = 'ERROR'
         result_text = "You want to buy fewer than 1 melons? Huh?"

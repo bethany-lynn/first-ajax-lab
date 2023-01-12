@@ -21,22 +21,20 @@ function showWeather(evt) {
   const zipcode = document.querySelector('#zipcode-field').value;
 
   // const queryString = new URLSearchParams({zipcode}).toString();
-  // console.log(queryString);
-
   // const url = `/weather.json?${queryString}`;
-  // console.log(url);
-  //url returns /weather.json?zipcode=94110
+  
 
-  const forecast = `${url}?zipcode=${zipcode}`;
-  console.log(forecast);
-  //forecast returns /weather.json?zipcode=94110
-
-  fetch(url)
-    .then(response => response.text())
-    .then((status) => {
-      document.querySelector('#weather-info').innerHTML = status;
+  fetch(`${url}?zipcode=${zipcode}`)
+  // variable on line 30 - the active url
+    .then(response => response.json())
+    // ^^ specifically used .json instead of .text 
+    .then((jsonData) => {
+      console.log(jsonData)
+      document.querySelector('#weather-info').innerHTML = jsonData.forecast;
     });
-}
+    // ^^ jsonData.forecast is indexing into the correct value (. method will look for string as key)
+    // dictionaries have to be returned as json, same with lists/arrays
+  }
 
 document.querySelector('#weather-form').addEventListener('submit', showWeather);
 
@@ -45,7 +43,30 @@ document.querySelector('#weather-form').addEventListener('submit', showWeather);
 function orderMelons(evt) {
   evt.preventDefault();
 
-  // TODO: show the result message after your form
-  // TODO: if the result code is ERROR, make it show up in red (see our CSS!)
+  const formInputs = {
+    melon_type: document.querySelector('#melon-type-field').value,
+    qty: document.querySelector('#qty-field').value,
+  };
+  // ^^ key value pairs of string(melon_tupe and qty) and form input 
+  // ^^ dict/obj being sent to server/python
+  // request.json gets values
+  
+    fetch('/order-melons.json', {
+      method: 'POST',
+      body: JSON.stringify(formInputs),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson.code == 'ERROR'){
+          document.querySelector('#order-status').classList.add('order-error');
+        } else if (responseJson.code == 'OK') {
+          document.querySelector('#order-status').classList.remove('order-error')
+        }
+        document.querySelector('#order-status').innerHTML = responseJson.msg;
+      });
+  // add .order-error class if result is ERROR
 }
 document.querySelector('#order-form').addEventListener('submit', orderMelons);
